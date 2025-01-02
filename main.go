@@ -86,7 +86,7 @@ func main() {
 
 	fmt.Printf(green, tr.Tr("IntelliJ 授权")+` v`+strings.Join(strings.Split(fmt.Sprint(version), ""), "."))
 	client.SetProxy(lang)
-	checkUpdate(version)
+	//checkUpdate(version)
 	sCount, sPayCount, _, _, exp := client.GetMyInfo(deviceID)
 	fmt.Printf(green, tr.Tr("设备码")+":"+deviceID)
 	expTime, _ := time.ParseInLocation("2006-01-02 15:04:05", exp, time.Local)
@@ -96,7 +96,7 @@ func main() {
 	fmt.Printf(hGreen, "bash <(curl -Lk "+githubPath+"install.sh) "+deviceID+"\n")
 	fmt.Printf(green, tr.Tr("专属推广链接")+"："+host+"?p="+deviceID)
 
-	printAD()
+	//printAD()
 	fmt.Println()
 
 	fmt.Printf(defaultColor, tr.Tr("选择要授权的产品："))
@@ -107,8 +107,8 @@ func main() {
 	}
 	fmt.Println()
 	fmt.Print(tr.Tr("请输入产品编号（直接回车默认为1）："))
-	productIndex := 1
-	_, _ = fmt.Scanln(&productIndex)
+	productIndex := 4
+	//_, _ = fmt.Scanln(&productIndex)
 	if productIndex < 1 || productIndex > len(jbProduct) {
 		fmt.Println(tr.Tr("输入有误"))
 		return
@@ -117,7 +117,7 @@ func main() {
 	fmt.Println()
 
 	// 到期了
-	periodIndex := 1
+	periodIndex := 2
 	_ = []time.Duration{367 * 24 * time.Hour, 24 * time.Hour}
 	if expTime.Before(time.Now()) {
 		fmt.Printf(defaultColor, tr.Tr("选择有效期："))
@@ -127,7 +127,7 @@ func main() {
 		}
 		fmt.Println()
 		fmt.Printf("%s", tr.Tr("请输入有效期编号（直接回车默认为1）："))
-		_, _ = fmt.Scanln(&periodIndex)
+		//_, _ = fmt.Scanln(&periodIndex)
 		if periodIndex < 1 || periodIndex > len(jbPeriod) {
 			fmt.Println(tr.Tr("输入有误"))
 			return
