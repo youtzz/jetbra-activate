@@ -86,17 +86,6 @@ func main() {
 
 	fmt.Printf(green, tr.Tr("IntelliJ 授权")+` v`+strings.Join(strings.Split(fmt.Sprint(version), ""), "."))
 	client.SetProxy(lang)
-	//checkUpdate(version)
-	sCount, sPayCount, _, _, exp := client.GetMyInfo(deviceID)
-	fmt.Printf(green, tr.Tr("设备码")+":"+deviceID)
-	expTime, _ := time.ParseInLocation("2006-01-02 15:04:05", exp, time.Local)
-	fmt.Printf(green, tr.Tr("付费到期时间")+":"+exp)
-	fmt.Printf("\033[32m%s\033[0m\u001B[1;32m %s \u001B[0m\033[32m%s\033[0m\u001B[1;32m %s \u001B[0m\u001B[32m%s\u001B[0m\n",
-		tr.Tr("推广命令：(已推广"), sCount, tr.Tr("人,推广已付费"), sPayCount, tr.Tr("人；每推广10人或推广付费2人可获得一年授权)"))
-	fmt.Printf(hGreen, "bash <(curl -Lk "+githubPath+"install.sh) "+deviceID+"\n")
-	fmt.Printf(green, tr.Tr("专属推广链接")+"："+host+"?p="+deviceID)
-
-	//printAD()
 	fmt.Println()
 
 	fmt.Printf(defaultColor, tr.Tr("选择要授权的产品："))
@@ -118,23 +107,6 @@ func main() {
 
 	// 到期了
 	periodIndex := 2
-	_ = []time.Duration{367 * 24 * time.Hour, 24 * time.Hour}
-	if expTime.Before(time.Now()) {
-		fmt.Printf(defaultColor, tr.Tr("选择有效期："))
-		jbPeriod := []string{"1" + tr.Tr("年(购买)"), "24" + tr.Tr("小时(免费)")}
-		for i, v := range jbPeriod {
-			fmt.Printf(hGreen, fmt.Sprintf("%d. %s\t", i+1, v))
-		}
-		fmt.Println()
-		fmt.Printf("%s", tr.Tr("请输入有效期编号（直接回车默认为1）："))
-		//_, _ = fmt.Scanln(&periodIndex)
-		if periodIndex < 1 || periodIndex > len(jbPeriod) {
-			fmt.Println(tr.Tr("输入有误"))
-			return
-		}
-		fmt.Println(tr.Tr("选择的有效期为：") + jbPeriod[periodIndex-1])
-		fmt.Println()
-	}
 
 	lic := ""
 	for i := 0; i < 50; i++ {
@@ -149,53 +121,13 @@ func main() {
 	fmt.Println()
 	fmt.Println()
 
-	switch periodIndex {
-	case 2:
-		isOk, result := client.GetLic(jbProductChoice[productIndex-1], periodIndex-1)
-		if !isOk {
-			fmt.Printf(red, result)
-			return
-		}
-		lic = result
-	case 1:
-		// 没到期
-		if expTime.After(time.Now()) {
-			isOk, result := client.GetLic(jbProductChoice[productIndex-1], periodIndex-1)
-			if !isOk {
-				fmt.Printf(red, result)
-				return
-			}
-			lic = result
-			fmt.Println()
-			goto Process
-		}
-		// 到期了
-		payUrl, orderID := client.GetPayUrl()
-		isCopyText := ""
-		errClip := clipboard.WriteAll(payUrl)
-		if errClip == nil {
-			isCopyText = tr.Tr("（已复制到剪贴板）")
-		}
-		fmt.Println(tr.Tr("付费已到期,捐赠以获取一年期授权") + isCopyText)
-		fmt.Printf(dGreen, payUrl)
-		fmt.Println(tr.Tr("捐赠完成后请回车"))
-		//检测控制台回车
-	checkPay:
-		_, _ = fmt.Scanln()
-		isPay := client.PayCheck(orderID, deviceID)
-		if !isPay {
-			fmt.Println(tr.Tr("未捐赠,请捐赠完成后回车"))
-			goto checkPay
-		}
-		isOk, result := client.GetLic(jbProductChoice[productIndex-1], periodIndex-1)
-		if !isOk {
-			fmt.Printf(red, result)
-			return
-		}
-		fmt.Println()
+	isOk, result := client.GetLic(jbProductChoice[productIndex-1], periodIndex-1)
+	if !isOk {
+		fmt.Printf(red, result)
+		return
 	}
+	lic = result
 
-Process:
 	isCopyText := ""
 	err = clipboard.WriteAll(lic)
 	if err == nil {
