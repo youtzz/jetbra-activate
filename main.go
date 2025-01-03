@@ -96,8 +96,8 @@ func main() {
 	}
 	fmt.Println()
 	fmt.Print(tr.Tr("请输入产品编号（直接回车默认为1）："))
-	productIndex := 4
-	//_, _ = fmt.Scanln(&productIndex)
+	productIndex := 1
+	_, _ = fmt.Scanln(&productIndex)
 	if productIndex < 1 || productIndex > len(jbProduct) {
 		fmt.Println(tr.Tr("输入有误"))
 		return
